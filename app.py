@@ -2,6 +2,8 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import uvicorn
+from math import pow
+from typing import Callable
 
 
 class Calculation(BaseModel):
@@ -14,20 +16,34 @@ class CalculationString(BaseModel):
     expression: str
 
 
-def calculate(operator, operand1, operand2):
-    if operator == '+':
-        return operand1 + operand2
-    elif operator == '-':
-        return operand1 - operand2
-    elif operator == '*':
-        return operand1 * operand2
-    elif operator == '/':
-        if operand2 != 0:
-            return operand1 / operand2
-        else:
-            return "Error: Division by zero"
-    else:
-        return "Error: Invalid operator"
+
+class OperatorFactory:
+    def __init__(self):
+        self.operators = {}
+    
+    def register_operator(self, operator: str, implementation: Callable[[float, float], float]):
+        self.operators[operator] = implementation
+    
+    def get_operator(self, operator: str) -> Callable[[float, float], float]:
+        if operator not in self.operators:
+            raise ValueError(f"Invalid operator: {operator}")
+        return self.operators[operator]
+
+operator_factory = OperatorFactory()
+
+def register_default_operators():
+    operator_factory.register_operator('+', lambda a, b: a + b)
+    operator_factory.register_operator('-', lambda a, b: a - b)
+    operator_factory.register_operator('*', lambda a, b: a * b)
+    operator_factory.register_operator('^', lambda a, b: pow(a, b) )
+    operator_factory.register_operator('/', lambda a, b: a / b if b != 0 else "Error: Division by zero")
+
+register_default_operators()
+
+
+def calculate(operator: str, operand1: float, operand2: float) -> float:
+    operator_impl = operator_factory.get_operator(operator)
+    return operator_impl(operand1, operand2)
 
 
 def calculate_expression(expression):
@@ -38,20 +54,8 @@ def calculate_expression(expression):
         operator = operands[i]
         operand = float(operands[i + 1])
 
-        if operator == '+':
-            result += operand
-        elif operator == '-':
-            result -= operand
-        elif operator == '*':
-            result *= operand
-        elif operator == '/':
-            if operand != 0:
-                result /= operand
-            else:
-                return "Error: Division by zero"
-        else:
-            return f"Error: Invalid operator '{operator}'"
-
+        result = calculate(operator, result, operand)
+        
     return result
 
 
