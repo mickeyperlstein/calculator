@@ -4,7 +4,6 @@ import uvicorn
 from math import pow
 from typing import Callable
 import numbers
-from py_expression_eval import Parser
 from math_eval import safe_compute, precedence_map, compute, binops, safe_binops
 import operator
 from fastapi.responses import JSONResponse

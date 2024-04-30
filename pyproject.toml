@@ -10,7 +10,6 @@ python = "^3.9"
 fastapi = "^0.110.2"
 uvicorn = "^0.29.0"
 pydantic = "^2.7.1"
-py-expression-eval = "^0.3.14"
 math-eval = "^0.2.4"
 
 
