@@ -10,7 +10,13 @@ python = "^3.9"
 fastapi = "^0.110.2"
 uvicorn = "^0.29.0"
 pydantic = "^2.7.1"
+py-expression-eval = "^0.3.14"
+math-eval = "^0.2.4"
 
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.2"
+httpx = "^0.27.0"
 
 [build-system]
 requires = ["poetry-core"]
